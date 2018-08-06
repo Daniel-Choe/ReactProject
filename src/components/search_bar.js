@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 // };
 
 // ES6 class based component that has properties and methods; additional functionalities are possible
-// Every class based component needs a render method
+// Every class based component needs a render method and deals with state
 // When importing { Component }, you can remove 'React.' from 'extends React.Component'
 class SearchBar extends Component {
 
@@ -17,7 +17,8 @@ class SearchBar extends Component {
     constructor(props) {
         super(props); // super makes a call to the parent class
 
-        this.state = { term: 'Starting Value' }; // state is initialized by assigning a new object, property 'term' will get updates/changes
+        // Whenever we change our state, the component instantly re renders along with any children it contains
+        this.state = { term: '' }; // state is initialized by assigning a new object, property 'term' will get updates/changes
     }
 
     render() {
@@ -29,23 +30,35 @@ class SearchBar extends Component {
         // if passing a singular argument, you can get rid of parentheses
         // return <input onChange={event => console.log(event.target.value) } />;
         return (
-            <div>
+            <div className="search-bar">
                 <input
-                    value={this.state.term} // controlled component, value is set by state, value only changes when state changes
-                    onChange={event => {
+                    // value is provided by this.state.term
+                    value={this.state.term} // input now becomes a controlled component, value is set by state, value only changes when state changes
+                    onChange={event =>
+                      {
                         console.log(event.target.value)
-                        this.setState({ term: event.target.value })
-                        }
+                        // this.setState({ term: event.target.value }) // whenever we update a component in some fashion, it is done with state
+                        // when user enters text, this line triggers the state (from initial assigned value to user input) and re renders the component
+                        // whenever we reference a javascript variable, we use curly brackets in jsx
+                        // this.setState updated below for user input searchbar
+                        // whenever content of the input changed, it now calls onInputChange with new input value
+                        this.onInputChange(event.target.value)
+                      }
                     } />
-                {/* when user enters text, this line triggers the state (from initial assigned value to user input) */}
             </div>
         );
-    }
-
+      }
     // Define a method that detects change to input field; Call it something relevant to its purpose
     // onInputChange(event) {
     //     console.log(event.target.value); // logs each change to input field
-    // } // refactored with arrow function above
+    // }
+    // refactored with arrow function above
+
+    // sets the state of this component, and fires back the callback component onSearchTermChange
+    onInputChange(term) {
+      this.setState({term});
+      this.props.onSearchTermChange(term);
+    }
 }
 
 export default SearchBar;
